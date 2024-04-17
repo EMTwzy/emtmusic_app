@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "less": "^4.2.0",
+    "less-loader": "^12.2.0",
+    "pinia": "^2.1.7",
+    "ts": "^0.2.2",
+    "ts-loader": "^9.5.1"
+  }
+}

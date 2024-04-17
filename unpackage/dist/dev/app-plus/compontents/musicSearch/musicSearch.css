@@ -1,0 +1,16 @@
+.search[data-v-544ac6aa] {
+  margin-top: 1.5625rem;
+  text-align: center;
+}
+.search .search_bk[data-v-544ac6aa] {
+  z-index: -1;
+  height: 6.25rem;
+}
+.search .input[data-v-544ac6aa] {
+  position: relative;
+  top: -5rem;
+  left: 6.25rem;
+  width: 40vw;
+  height: 3.125rem;
+  text-align: center;
+}
