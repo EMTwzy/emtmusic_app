@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-	import {ref,watch,nextTick } from 'vue';
+	import {ref,nextTick } from 'vue';
 	import {useIndexStore} from '../../pinia/useIndex';
 	
 	//试着将内容绑定在pinia的相应参数上
@@ -17,31 +17,31 @@
 	
 	
 	function search(){
+		useIndexStore().musicItems.length=0;
 		useIndexStore().changeSearchValue(searchValue.value);
-		nextTick(()=>{
-		console.log('数据似乎发生了变更',useIndexStore().searchValue);
-		})
+		useIndexStore().search();
+		// nextTick(()=>{
+		// console.log('数据似乎发生了变更',useIndexStore().searchValue);
+		// })
 		
 	}
 	
-	watch(searchValue,()=>{
-		console.log('@@@@@@@@@@',searchValue.value);
-	})
 </script>
 
 <style lang="less" scoped>
 	.search{
 		margin-top: 50rpx;
 		text-align: center;
+		height: 120rpx;
 		// 背景图
 		.search_bk{
 			z-index: -1;
-			height: 200rpx;
+			height: 120rpx;
 		}
 		// 输入框
 		.input{
 			position: relative;
-			top: -160rpx;
+			top: -120rpx;
 			left: 200rpx;
 			width: 40vw;
 			height: 100rpx;

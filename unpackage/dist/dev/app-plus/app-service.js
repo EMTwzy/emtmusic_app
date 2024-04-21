@@ -31,19 +31,8 @@ if (uni.restoreGlobal) {
 }
 (function(vue) {
   "use strict";
-  const _export_sfc = (sfc, props) => {
-    const target = sfc.__vccOpts || sfc;
-    for (const [key, val] of props) {
-      target[key] = val;
-    }
-    return target;
-  };
-  const _sfc_main$4 = {};
-  function _sfc_render(_ctx, _cache) {
-    return vue.openBlock(), vue.createElementBlock("view", { class: "" });
-  }
-  const CompontentsMusicItemMusicItem = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render], ["__file", "E:/程序夹/emtmusic_app/compontents/musicItem/musicItem.vue"]]);
   const ON_LOAD = "onLoad";
+  const ON_REACH_BOTTOM = "onReachBottom";
   function formatAppLog(type, filename, ...args) {
     if (uni.__log__) {
       uni.__log__(type, filename, ...args);
@@ -51,10 +40,204 @@ if (uni.restoreGlobal) {
       console[type].apply(console, [...args, filename]);
     }
   }
+  function resolveEasycom(component, easycom) {
+    return typeof component === "string" ? easycom : component;
+  }
   const createHook = (lifecycle) => (hook, target = vue.getCurrentInstance()) => {
     !vue.isInSSRComponentSetup && vue.injectHook(lifecycle, hook, target);
   };
   const onLoad = /* @__PURE__ */ createHook(ON_LOAD);
+  const onReachBottom = /* @__PURE__ */ createHook(ON_REACH_BOTTOM);
+  const _export_sfc = (sfc, props) => {
+    const target = sfc.__vccOpts || sfc;
+    for (const [key, val] of props) {
+      target[key] = val;
+    }
+    return target;
+  };
+  const ComponentClass$1 = "uni-col";
+  const _sfc_main$9 = {
+    name: "uniCol",
+    props: {
+      span: {
+        type: Number,
+        default: 24
+      },
+      offset: {
+        type: Number,
+        default: -1
+      },
+      pull: {
+        type: Number,
+        default: -1
+      },
+      push: {
+        type: Number,
+        default: -1
+      },
+      xs: [Number, Object],
+      sm: [Number, Object],
+      md: [Number, Object],
+      lg: [Number, Object],
+      xl: [Number, Object]
+    },
+    data() {
+      return {
+        gutter: 0,
+        sizeClass: "",
+        parentWidth: 0,
+        nvueWidth: 0,
+        marginLeft: 0,
+        right: 0,
+        left: 0
+      };
+    },
+    created() {
+      let parent = this.$parent;
+      while (parent && parent.$options.componentName !== "uniRow") {
+        parent = parent.$parent;
+      }
+      this.updateGutter(parent.gutter);
+      parent.$watch("gutter", (gutter) => {
+        this.updateGutter(gutter);
+      });
+    },
+    computed: {
+      sizeList() {
+        let {
+          span,
+          offset,
+          pull,
+          push
+        } = this;
+        return {
+          span,
+          offset,
+          pull,
+          push
+        };
+      },
+      pointClassList() {
+        let classList = [];
+        ["xs", "sm", "md", "lg", "xl"].forEach((point) => {
+          const props = this[point];
+          if (typeof props === "number") {
+            classList.push(`${ComponentClass$1}-${point}-${props}`);
+          } else if (typeof props === "object" && props) {
+            Object.keys(props).forEach((pointProp) => {
+              classList.push(
+                pointProp === "span" ? `${ComponentClass$1}-${point}-${props[pointProp]}` : `${ComponentClass$1}-${point}-${pointProp}-${props[pointProp]}`
+              );
+            });
+          }
+        });
+        return classList.join(" ");
+      }
+    },
+    methods: {
+      updateGutter(parentGutter) {
+        parentGutter = Number(parentGutter);
+        if (!isNaN(parentGutter)) {
+          this.gutter = parentGutter / 2;
+        }
+      }
+    },
+    watch: {
+      sizeList: {
+        immediate: true,
+        handler(newVal) {
+          let classList = [];
+          for (let size in newVal) {
+            const curSize = newVal[size];
+            if ((curSize || curSize === 0) && curSize !== -1) {
+              classList.push(
+                size === "span" ? `${ComponentClass$1}-${curSize}` : `${ComponentClass$1}-${size}-${curSize}`
+              );
+            }
+          }
+          this.sizeClass = classList.join(" ");
+        }
+      }
+    }
+  };
+  function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock(
+      "view",
+      {
+        class: vue.normalizeClass(["uni-col", $data.sizeClass, $options.pointClassList]),
+        style: vue.normalizeStyle({
+          paddingLeft: `${Number($data.gutter)}rpx`,
+          paddingRight: `${Number($data.gutter)}rpx`
+        })
+      },
+      [
+        vue.renderSlot(_ctx.$slots, "default", {}, void 0, true)
+      ],
+      6
+      /* CLASS, STYLE */
+    );
+  }
+  const __easycom_0$1 = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$2], ["__scopeId", "data-v-6ad5e460"], ["__file", "E:/程序夹/emtmusic_app/node_modules/@dcloudio/uni-ui/lib/uni-col/uni-col.vue"]]);
+  const ComponentClass = "uni-row";
+  const modifierSeparator = "--";
+  const _sfc_main$8 = {
+    name: "uniRow",
+    componentName: "uniRow",
+    props: {
+      type: String,
+      gutter: Number,
+      justify: {
+        type: String,
+        default: "start"
+      },
+      align: {
+        type: String,
+        default: "top"
+      },
+      // nvue如果使用span等属性，需要配置宽度
+      width: {
+        type: [String, Number],
+        default: 750
+      }
+    },
+    created() {
+    },
+    computed: {
+      marginValue() {
+        if (this.gutter) {
+          return -(this.gutter / 2);
+        }
+        return 0;
+      },
+      typeClass() {
+        return this.type === "flex" ? `${ComponentClass + modifierSeparator}flex` : "";
+      },
+      justifyClass() {
+        return this.justify !== "start" ? `${ComponentClass + modifierSeparator}flex-justify-${this.justify}` : "";
+      },
+      alignClass() {
+        return this.align !== "top" ? `${ComponentClass + modifierSeparator}flex-align-${this.align}` : "";
+      }
+    }
+  };
+  function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
+    return vue.openBlock(), vue.createElementBlock(
+      "view",
+      {
+        class: vue.normalizeClass(["uni-row", $options.typeClass, $options.justifyClass, $options.alignClass]),
+        style: vue.normalizeStyle({
+          marginLeft: `${Number($options.marginValue)}rpx`,
+          marginRight: `${Number($options.marginValue)}rpx`
+        })
+      },
+      [
+        vue.renderSlot(_ctx.$slots, "default", {}, void 0, true)
+      ],
+      6
+      /* CLASS, STYLE */
+    );
+  }
+  const __easycom_0 = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$1], ["__scopeId", "data-v-86edfd37"], ["__file", "E:/程序夹/emtmusic_app/node_modules/@dcloudio/uni-ui/lib/uni-row/uni-row.vue"]]);
   var isVue2 = false;
   function set(target, key, val) {
     if (Array.isArray(target)) {
@@ -1491,36 +1674,225 @@ This will fail in production.`);
     useStore.$id = id;
     return useStore;
   }
+  const baseUrl = "https://api.vkeys.cn/V1/Music";
+  const https = (url, method, data) => {
+    return new Promise((resolve, reject) => {
+      uni.showLoading({
+        title: "加载中，有点慢，请耐心等待"
+      });
+      uni.request({
+        url: baseUrl + url,
+        method,
+        data,
+        header: {
+          "content-type": "application/json"
+          //默认请求头
+        },
+        success: (res) => {
+          if (res.statusCode == 200)
+            resolve(res.data);
+          else {
+            reject(baseUrl + url + "请求失败");
+          }
+          uni.hideLoading();
+        },
+        fail: (error) => {
+          reject(error);
+          uni.hideLoading();
+          uni.showToast({
+            title: "获取失败！请等服务器冷却后再重试",
+            icon: "none",
+            duration: 1500
+          });
+        }
+      });
+    });
+  };
+  const searchList = async (name, page) => {
+    try {
+      formatAppLog("log", "at api/api.ts:10", "看看请求参数", name, page);
+      let res = await https("/Tencent", "GET", { word: name, page });
+      formatAppLog("log", "at api/api.ts:12", "@searchList", res.data);
+      return res.data;
+    } catch (error) {
+      uni.showToast({
+        title: name + "查询失败",
+        icon: "error"
+      });
+    }
+  };
+  const searchMusic = async (id) => {
+    try {
+      let res = await https("/Tencent", "GET", { id });
+      formatAppLog("log", "at api/api.ts:26", "@searchMusic", res.data);
+      return res.data;
+    } catch (error) {
+      uni.showToast({
+        title: "资源获取失败",
+        icon: "none"
+      });
+    }
+  };
   const useIndexStore = defineStore("index", {
     state: () => ({
       searchValue: "",
       //查询内容
-      musicItems: [],
-      //当前查询对象的列表项
-      musicSelected: ""
-      //选择项
+      musicItems: [
+        //当前查询对象的列表项
+        {
+          "id": 0,
+          "mid": "",
+          "vid": "",
+          "song": "",
+          "subtitle": "",
+          "singer": "",
+          "album": "",
+          "pay": "",
+          "time": "",
+          "bpm": null,
+          "quality": "",
+          "interval": "",
+          "size": "",
+          "kbps": "",
+          "cover": ""
+        }
+      ],
+      musicSelected: {
+        //选择项
+        id: 0,
+        mid: "",
+        vid: "",
+        song: "",
+        subtitle: "",
+        singer: "",
+        album: "",
+        pay: "",
+        time: "",
+        bpm: null,
+        quality: "",
+        interval: "",
+        size: "",
+        kbps: "",
+        cover: "",
+        link: "",
+        url: ""
+      },
+      page: 1,
+      //页数 默认为1
+      selectId: 0,
+      //被选中项的id
+      showOptions: false
+      //是否显示选择操作
     }),
     getters: {},
     actions: {
       // 改变searchValue的数据值
       changeSearchValue(newValue) {
         this.searchValue = newValue;
+      },
+      //查询列表
+      async search() {
+        try {
+          if (this.searchValue != "") {
+            let res = await searchList(this.searchValue, this.page);
+            this.musicItems = [...this.musicItems, ...res];
+            formatAppLog("log", "at pinia/useIndex.ts:67", "@pinia/search", this.musicItems);
+          }
+        } catch (error) {
+          formatAppLog("error", "at pinia/useIndex.ts:70", "@pinia/search出错了！");
+        }
+      },
+      //根据id获取播放数据
+      async playMusic() {
+        try {
+          if (this.selectId != 0) {
+            let res = await searchMusic(this.selectId);
+            this.musicSelected = res;
+            formatAppLog("log", "at pinia/useIndex.ts:80", "@pinia/playMusic", this.musicSelected);
+          }
+        } catch (error) {
+          formatAppLog("error", "at pinia/useIndex.ts:83", "@pinia/playMusic出错了!");
+        }
       }
     }
   });
-  const _sfc_main$3 = /* @__PURE__ */ vue.defineComponent({
+  const _sfc_main$7 = /* @__PURE__ */ vue.defineComponent({
+    __name: "musicItem",
+    props: {
+      obj: { type: null, required: true }
+    },
+    setup(__props) {
+      const data = __props;
+      const useIndex = useIndexStore();
+      function showOptions() {
+        useIndex.showOptions = true;
+        useIndex.selectId = data.obj.id;
+      }
+      return (_ctx, _cache) => {
+        const _component_uni_col = resolveEasycom(vue.resolveDynamicComponent("uni-col"), __easycom_0$1);
+        const _component_uni_row = resolveEasycom(vue.resolveDynamicComponent("uni-row"), __easycom_0);
+        return vue.openBlock(), vue.createElementBlock("view", {
+          class: "item",
+          onClick: showOptions
+        }, [
+          vue.createVNode(_component_uni_row, null, {
+            default: vue.withCtx(() => [
+              vue.createVNode(_component_uni_col, { span: 4 }, {
+                default: vue.withCtx(() => [
+                  vue.createCommentVNode(" 图片封面 "),
+                  vue.createElementVNode("image", {
+                    src: data.obj.cover == "" ? "../../static/load.jpg" : data.obj.cover,
+                    mode: "aspectFit"
+                  }, null, 8, ["src"])
+                ]),
+                _: 1
+                /* STABLE */
+              }),
+              vue.createVNode(_component_uni_col, { span: 2 }, {
+                default: vue.withCtx(() => [
+                  vue.createTextVNode("   ")
+                ]),
+                _: 1
+                /* STABLE */
+              }),
+              vue.createVNode(_component_uni_col, { span: 18 }, {
+                default: vue.withCtx(() => [
+                  vue.createElementVNode("div", { class: "infor" }, [
+                    vue.createTextVNode(
+                      vue.toDisplayString(data.obj.song) + " ",
+                      1
+                      /* TEXT */
+                    ),
+                    vue.createElementVNode(
+                      "p",
+                      null,
+                      vue.toDisplayString(data.obj.singer),
+                      1
+                      /* TEXT */
+                    )
+                  ])
+                ]),
+                _: 1
+                /* STABLE */
+              })
+            ]),
+            _: 1
+            /* STABLE */
+          })
+        ]);
+      };
+    }
+  });
+  const CompontentsMusicItemMusicItem = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "data-v-d643d55c"], ["__file", "E:/程序夹/emtmusic_app/compontents/musicItem/musicItem.vue"]]);
+  const _sfc_main$6 = /* @__PURE__ */ vue.defineComponent({
     __name: "musicSearch",
     setup(__props) {
       const searchValue = vue.ref("");
       function search() {
+        useIndexStore().musicItems.length = 0;
         useIndexStore().changeSearchValue(searchValue.value);
-        vue.nextTick(() => {
-          formatAppLog("log", "at compontents/musicSearch/musicSearch.vue:22", "数据似乎发生了变更", useIndexStore().searchValue);
-        });
+        useIndexStore().search();
       }
-      vue.watch(searchValue, () => {
-        formatAppLog("log", "at compontents/musicSearch/musicSearch.vue:28", "@@@@@@@@@@", searchValue.value);
-      });
       return (_ctx, _cache) => {
         return vue.openBlock(), vue.createElementBlock("view", { class: "search" }, [
           vue.createCommentVNode(" 输入框背景图 "),
@@ -1548,8 +1920,8 @@ This will fail in production.`);
       };
     }
   });
-  const CompontentsMusicSearchMusicSearch = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-544ac6aa"], ["__file", "E:/程序夹/emtmusic_app/compontents/musicSearch/musicSearch.vue"]]);
-  const _sfc_main$2 = /* @__PURE__ */ vue.defineComponent({
+  const CompontentsMusicSearchMusicSearch = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-544ac6aa"], ["__file", "E:/程序夹/emtmusic_app/compontents/musicSearch/musicSearch.vue"]]);
+  const _sfc_main$5 = /* @__PURE__ */ vue.defineComponent({
     __name: "topBar",
     setup(__props) {
       const statusBarHeight = vue.ref(0);
@@ -1587,10 +1959,228 @@ This will fail in production.`);
       };
     }
   });
-  const CompontentsTopBarTopBar = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-ee97fe23"], ["__file", "E:/程序夹/emtmusic_app/compontents/topBar/topBar.vue"]]);
-  const _sfc_main$1 = {
+  const CompontentsTopBarTopBar = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-ee97fe23"], ["__file", "E:/程序夹/emtmusic_app/compontents/topBar/topBar.vue"]]);
+  const _sfc_main$4 = /* @__PURE__ */ vue.defineComponent({
+    __name: "musicPlay",
+    setup(__props) {
+      const useIndex = useIndexStore();
+      const itemSelected = vue.computed(() => useIndex.musicSelected);
+      const url = vue.computed(() => useIndex.musicSelected.url);
+      const isPlay = vue.ref(false);
+      const innerAudioContext = uni.createInnerAudioContext();
+      innerAudioContext.src = url.value;
+      const pros = vue.ref(0);
+      const currentTime = vue.ref(0);
+      const duration = vue.ref(0);
+      vue.watch(currentTime, () => {
+        pros.value = currentTime.value / duration.value;
+        formatAppLog("log", "at compontents/musicPlay/musicPlay.vue:67", "现在的位标", pros.value);
+      });
+      function init() {
+        if (useIndex.musicSelected.url != "" && useIndex.musicSelected.url != void 0) {
+          isPlay.value = true;
+          if (useIndex.musicSelected.url !== innerAudioContext.src) {
+            innerAudioContext.src = useIndex.musicSelected.url;
+            currentTime.value = 0;
+          }
+          innerAudioContext.play();
+        } else {
+          isPlay.value = false;
+          innerAudioContext.pause();
+        }
+      }
+      innerAudioContext.onCanplay(() => {
+        currentTime.value = innerAudioContext.currentTime;
+        duration.value = innerAudioContext.duration;
+        formatAppLog("log", "at compontents/musicPlay/musicPlay.vue:90", "总位", duration.value, "现位", currentTime.value, "innerAudioContext", innerAudioContext);
+      });
+      innerAudioContext.onTimeUpdate((res) => {
+        currentTime.value += 20;
+      });
+      function changePlay(options) {
+        switch (options) {
+          case "play":
+            isPlay.value = true;
+            init();
+            break;
+          case "pause":
+            isPlay.value = false;
+            innerAudioContext.pause();
+            break;
+        }
+      }
+      onLoad(() => {
+      });
+      return (_ctx, _cache) => {
+        const _component_uni_col = resolveEasycom(vue.resolveDynamicComponent("uni-col"), __easycom_0$1);
+        const _component_uni_row = resolveEasycom(vue.resolveDynamicComponent("uni-row"), __easycom_0);
+        return vue.openBlock(), vue.createElementBlock("view", { class: "audio" }, [
+          vue.createCommentVNode(" 进度条 "),
+          vue.createElementVNode("progress", {
+            percent: pros.value,
+            "stroke-width": "3",
+            class: "progress"
+          }, null, 8, ["percent"]),
+          vue.createVNode(_component_uni_row, null, {
+            default: vue.withCtx(() => [
+              vue.createVNode(_component_uni_col, { span: "5" }, {
+                default: vue.withCtx(() => [
+                  vue.createCommentVNode(" 封面 "),
+                  vue.createElementVNode("image", {
+                    src: itemSelected.value.cover == "" || itemSelected.value.cover == void 0 ? "../../static/logo.png" : itemSelected.value.cover,
+                    mode: "aspectFit"
+                  }, null, 8, ["src"])
+                ]),
+                _: 1
+                /* STABLE */
+              }),
+              vue.createVNode(_component_uni_col, { span: "14" }, {
+                default: vue.withCtx(() => [
+                  vue.createCommentVNode(" 音乐名称及歌手 "),
+                  vue.createElementVNode("view", { class: "audioName" }, [
+                    vue.createElementVNode(
+                      "span",
+                      null,
+                      vue.toDisplayString(itemSelected.value.song == "" || itemSelected.value.song == void 0 ? "先选一首歌吧" : itemSelected.value.song),
+                      1
+                      /* TEXT */
+                    ),
+                    vue.createElementVNode(
+                      "p",
+                      null,
+                      vue.toDisplayString(itemSelected.value.singer == "" || itemSelected.value.song == void 0 ? "先选一首歌吧" : itemSelected.value.singer),
+                      1
+                      /* TEXT */
+                    )
+                  ])
+                ]),
+                _: 1
+                /* STABLE */
+              }),
+              vue.createVNode(_component_uni_col, { span: "5" }, {
+                default: vue.withCtx(() => [
+                  vue.createCommentVNode(" 暂停/播放 下载"),
+                  vue.createElementVNode("view", { class: "audioController" }, [
+                    vue.createCommentVNode(" 播放 "),
+                    vue.withDirectives(vue.createElementVNode(
+                      "span",
+                      {
+                        onClick: _cache[0] || (_cache[0] = ($event) => changePlay("play"))
+                      },
+                      [
+                        vue.createElementVNode("image", {
+                          src: "/static/play-one.svg",
+                          mode: "aspectFit"
+                        })
+                      ],
+                      512
+                      /* NEED_PATCH */
+                    ), [
+                      [vue.vShow, !isPlay.value]
+                    ]),
+                    vue.createCommentVNode(" 暂停 "),
+                    vue.withDirectives(vue.createElementVNode(
+                      "span",
+                      {
+                        onClick: _cache[1] || (_cache[1] = ($event) => changePlay("pause"))
+                      },
+                      [
+                        vue.createElementVNode("image", {
+                          src: "/static/pause.svg",
+                          mode: "aspectFit"
+                        })
+                      ],
+                      512
+                      /* NEED_PATCH */
+                    ), [
+                      [vue.vShow, isPlay.value]
+                    ]),
+                    vue.createCommentVNode(" 下载 "),
+                    vue.createElementVNode("image", {
+                      src: "/static/download-four.svg",
+                      mode: "aspectFit"
+                    })
+                  ])
+                ]),
+                _: 1
+                /* STABLE */
+              })
+            ]),
+            _: 1
+            /* STABLE */
+          })
+        ]);
+      };
+    }
+  });
+  const CompontentsMusicPlayMusicPlay = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-15b1af78"], ["__file", "E:/程序夹/emtmusic_app/compontents/musicPlay/musicPlay.vue"]]);
+  const _sfc_main$3 = /* @__PURE__ */ vue.defineComponent({
+    __name: "optionsItem",
+    setup(__props) {
+      const selectedItem = [
+        "播放",
+        "下载：低音质",
+        "下载：中音质",
+        "下载：高音质",
+        "取消"
+      ];
+      const useIndex = useIndexStore();
+      function selected(item) {
+        let index = selectedItem.indexOf(item);
+        formatAppLog("log", "at compontents/optionsItem/optionsItem.vue:21", "选择项", item, index);
+        switch (index) {
+          case 0:
+            useIndex.playMusic();
+            break;
+        }
+        useIndex.showOptions = false;
+      }
+      return (_ctx, _cache) => {
+        const _component_uni_row = resolveEasycom(vue.resolveDynamicComponent("uni-row"), __easycom_0);
+        return vue.openBlock(), vue.createElementBlock("view", { class: "options_bk" }, [
+          vue.createElementVNode("view", { class: "content" }, [
+            (vue.openBlock(), vue.createElementBlock(
+              vue.Fragment,
+              null,
+              vue.renderList(selectedItem, (item) => {
+                return vue.createVNode(_component_uni_row, {
+                  key: item,
+                  onClick: vue.withModifiers(($event) => selected(item), ["stop"])
+                }, {
+                  default: vue.withCtx(() => [
+                    vue.createTextVNode(
+                      vue.toDisplayString(item),
+                      1
+                      /* TEXT */
+                    )
+                  ]),
+                  _: 2
+                  /* DYNAMIC */
+                }, 1032, ["onClick"]);
+              }),
+              64
+              /* STABLE_FRAGMENT */
+            ))
+          ])
+        ]);
+      };
+    }
+  });
+  const CompontentsOptionsItemOptionsItem = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-cb9fc64e"], ["__file", "E:/程序夹/emtmusic_app/compontents/optionsItem/optionsItem.vue"]]);
+  const _sfc_main$2 = {
     __name: "index",
     setup(__props) {
+      const useIndex = useIndexStore();
+      const items = vue.computed(() => useIndex.musicItems);
+      vue.computed(() => useIndex.musicSelected);
+      const showOptions = vue.computed(() => useIndex.showOptions);
+      onReachBottom(() => {
+        formatAppLog("log", "at pages/index/index.vue:51", "触底了！");
+        if (useIndex.searchValue != "") {
+          useIndex.page++;
+          useIndex.search();
+        }
+      });
       return (_ctx, _cache) => {
         return vue.openBlock(), vue.createElementBlock(
           vue.Fragment,
@@ -1607,7 +2197,35 @@ This will fail in production.`);
               vue.createCommentVNode(" 查询组件 "),
               vue.createVNode(CompontentsMusicSearchMusicSearch),
               vue.createCommentVNode(" 音乐列表项组件 "),
-              vue.createCommentVNode(" <musicItem></musicItem> ")
+              items.value.length > 1 ? (vue.openBlock(), vue.createElementBlock("div", { key: 0 }, [
+                (vue.openBlock(true), vue.createElementBlock(
+                  vue.Fragment,
+                  null,
+                  vue.renderList(items.value, (item) => {
+                    return vue.openBlock(), vue.createBlock(CompontentsMusicItemMusicItem, {
+                      key: item.id,
+                      obj: item,
+                      class: "item"
+                    }, null, 8, ["obj"]);
+                  }),
+                  128
+                  /* KEYED_FRAGMENT */
+                ))
+              ])) : vue.createCommentVNode("v-if", true),
+              vue.createCommentVNode(" 音乐播放 "),
+              vue.createVNode(CompontentsMusicPlayMusicPlay)
+            ]),
+            vue.createCommentVNode(" 选择操作 "),
+            vue.withDirectives(vue.createElementVNode(
+              "div",
+              null,
+              [
+                vue.createVNode(CompontentsOptionsItemOptionsItem)
+              ],
+              512
+              /* NEED_PATCH */
+            ), [
+              [vue.vShow, showOptions.value]
             ])
           ],
           64
@@ -1616,11 +2234,19 @@ This will fail in production.`);
       };
     }
   };
-  const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__file", "E:/程序夹/emtmusic_app/pages/index/index.vue"]]);
+  const PagesIndexIndex = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__file", "E:/程序夹/emtmusic_app/pages/index/index.vue"]]);
+  const _sfc_main$1 = {};
+  function _sfc_render(_ctx, _cache) {
+    return vue.openBlock(), vue.createElementBlock("view", { class: "" });
+  }
+  const PagesSettingSetting = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render], ["__file", "E:/程序夹/emtmusic_app/pages/setting/setting.vue"]]);
   __definePage("pages/index/index", PagesIndexIndex);
   __definePage("compontents/musicItem/musicItem", CompontentsMusicItemMusicItem);
   __definePage("compontents/musicSearch/musicSearch", CompontentsMusicSearchMusicSearch);
   __definePage("compontents/topBar/topBar", CompontentsTopBarTopBar);
+  __definePage("pages/setting/setting", PagesSettingSetting);
+  __definePage("compontents/musicPlay/musicPlay", CompontentsMusicPlayMusicPlay);
+  __definePage("compontents/optionsItem/optionsItem", CompontentsOptionsItemOptionsItem);
   const _sfc_main = {
     onLaunch: function() {
       formatAppLog("log", "at App.vue:4", "App Launch");
