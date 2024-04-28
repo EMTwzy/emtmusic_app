@@ -30,7 +30,7 @@
 
 <style lang="less" scoped>
 	.search{
-		margin-top: 50rpx;
+		margin-top: 80rpx;
 		text-align: center;
 		height: 120rpx;
 		// 背景图

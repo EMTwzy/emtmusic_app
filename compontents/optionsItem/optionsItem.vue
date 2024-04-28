@@ -11,6 +11,7 @@
 <script setup lang="ts">
 	import { ref } from 'vue';
 	import { useIndexStore } from '../../pinia/useIndex';
+	import { downloadMusic } from '../../api/api';
 	const selectedItem = [
 		'播放', '下载：低音质', '下载：中音质', '下载：高音质','取消'
 	];
@@ -24,13 +25,13 @@
 			useIndex.playMusic();
 			break;
 			case 1:		//下载：低
-			
+			downloadMusic(useIndex.selectId,3);
 			break;
 			case 2:		//下载：中
-			
+			downloadMusic(useIndex.selectId,6);
 			break;
 			case 3:		//下载：高
-			
+			downloadMusic(useIndex.selectId,9);
 			break;
 		};
 		useIndex.showOptions=false;

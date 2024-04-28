@@ -17,6 +17,8 @@
 	<div v-show="showOptions">
 		<optionsItem></optionsItem>
 	</div>
+	<wrap-version-update id="540613223891013" @check="handleCheck"></wrap-version-update>
+
 </template>
 
 <script setup>
@@ -24,7 +26,7 @@
 		computed
 	} from 'vue';
 	import {
-		onReachBottom
+		onReachBottom,onLoad
 	} from '@dcloudio/uni-app';
 	//导入音乐列表项组件	//导入音乐查询项组件	//导入自定义导航栏 //导入音乐播放组件
 	import musicItem from '../../compontents/musicItem/musicItem.vue';
@@ -36,8 +38,10 @@
 	import {
 		useIndexStore
 	} from '../../pinia/useIndex';
-	//import  {itemsI}  from '../../interface/itemsInterface';
-
+	import { getPath } from '../../utils/getPath';
+	
+	import WrapVersionUpdate from '@/uni_modules/wrap-version-update/components/wrap-version-update/wrap-version-update.nvue'
+	
 	//使用useIndex
 	const useIndex = useIndexStore();
 	//查询内容列表
@@ -54,6 +58,19 @@
 			useIndex.search();
 		}
 	})
+	
+	onLoad(()=>{
+		// 初始化下载地址
+		//getPath();
+		useIndex.downPath="/storage/emulated/0/EMT音乐";
+	})
+	
+	//更新就隐藏底部菜单栏
+		function handleCheck(e){
+			if(e.needUpdate){
+				uni.hideTabBar();
+			}
+		}
 </script>
 
 <style lang="less">

@@ -1,7 +1,7 @@
 <template>
 	<view class="audio">
 		<!-- 进度条 -->
-		<progress :percent="pros" stroke-width="3" class="progress" />
+		<progress :percent="pros" stroke-width="4" class="progress" @click="tapPro" />
 		<uni-row>
 			<uni-col span="5">
 				<!-- 封面 -->
@@ -56,15 +56,27 @@
 	// 构建audio
 	const innerAudioContext = uni.createInnerAudioContext();
 	innerAudioContext.src = url.value;
-	//进度条 比例
+	//进度条 当前视窗的大小 / 比例/位置 
+	const viewWidth = ref(0);
+	uni.getSystemInfo({
+		success: (res) => {
+			console.log(res.windowWidth);
+			viewWidth.value = res.windowWidth;
+		}
+	})
+	const scale = ref(0);
 	const pros = ref(0);
 	//当前位时间 /当前总时间
 	const currentTime = ref(0);
 	const duration = ref(0);
+
+
+
 	//当现位发生变化后改变进度条长度
 	watch(currentTime, () => {
-		pros.value = currentTime.value / duration.value;
-		console.log('现在的位标',pros.value);
+		pros.value = currentTime.value / duration.value * 100;
+		console.log('看看currentTime', currentTime.value);
+		console.log('现在的位标', pros.value);
 	});
 
 	//监听当前是否有指定播放
@@ -74,28 +86,40 @@
 			// 如果当前src地址与pinia地址不一致，以pinia地址为准
 			if (useIndex.musicSelected.url !== innerAudioContext.src) {
 				innerAudioContext.src = useIndex.musicSelected.url;
-				currentTime.value=0;
+				currentTime.value = 0;
 			}
 			innerAudioContext.play();
+			timeUpdate();
 		} else {
 			isPlay.value = false;
 			innerAudioContext.pause();
 		}
 	}
-
+	//可以进行播放时进行数据值的初始化
 	innerAudioContext.onCanplay(() => {
 		//初次播放后测算总长度与定位现长度
-		currentTime.value = innerAudioContext.currentTime;
+		//currentTime.value = innerAudioContext.currentTime;
 		duration.value = innerAudioContext.duration;
 		console.log('总位', duration.value, '现位', currentTime.value, 'innerAudioContext', innerAudioContext);
 	});
-	// 监听播放进度更新事件  
+	//播放自然结束时
+	innerAudioContext.onEnded(()=>{
+		isPlay.value = false;
+		timeUpdate();
+	})
+	// 更新进度条变化
+	function timeUpdate() {
+		const time = setInterval(() => {
+			if (isPlay.value == true) {
+				currentTime.value++;
+			} else {
+				clearInterval(time);
+			}
+		}, 1000);
+	} 
 	
-	innerAudioContext.onTimeUpdate((res) => {  
-		currentTime.value+=20; 
-	  // 这里可以更新你界面上的播放进度条或其他需要显示当前时间的组件  
-	
-	}); 
+
+
 
 	//播放/暂停
 	function changePlay(options) {
@@ -107,13 +131,25 @@
 			case 'pause':
 				isPlay.value = false;
 				innerAudioContext.pause();
+				timeUpdate();
 				break;
 		}
 	}
 
+	//进度条的拖拽
+	function tapPro(e) {
+		if (duration.value != 0) {
+			scale.value = e.detail.x / viewWidth.value;
+			scale.value = parseFloat(scale.value.toFixed(2));   //将比例结果转为2个小数位
+			pros.value = scale.value * 100;        //设置进度条
+			currentTime.value = scale.value * duration.value;  //当前播放位
+			innerAudioContext.seek( scale.value * duration.value);  //设置audio的当前位
+			console.log('@tapPro看看位标/比例/音频位', pros.value, scale.value, currentTime.value,scale.value*duration.value);
+		}
+
+	}
 
 	onLoad(() => {
-
 
 
 	})

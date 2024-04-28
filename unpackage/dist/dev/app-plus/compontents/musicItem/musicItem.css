@@ -2237,4 +2237,5 @@
 }
 .item .infor[data-v-d643d55c] {
   padding: 0.03125rem;
+  overflow: auto;
 }

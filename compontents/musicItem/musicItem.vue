@@ -57,6 +57,7 @@
 
 		.infor {
 			padding: 1rpx;
+			overflow: auto;
 		}
 	}
 </style>

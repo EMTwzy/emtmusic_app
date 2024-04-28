@@ -49,6 +49,7 @@ export const useIndexStore = defineStore('index', {
 		page: 1,       //页数 默认为1
 		selectId: 0,       //被选中项的id
 		showOptions: false,   //是否显示选择操作
+		downPath:''
 	}),
 	getters: {
 
@@ -83,9 +84,6 @@ export const useIndexStore = defineStore('index', {
 				console.error('@pinia/playMusic出错了!');
 			}
 		},
-		
-		
-		
 		
 	}
 })
